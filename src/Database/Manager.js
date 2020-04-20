@@ -43,9 +43,19 @@ class DatabaseManager {
   constructor (Config) {
     this.Config = Config
     this._connectionPools = {}
+    this.connectionName = null
     return new Proxy(this, {
       get: proxyGet('connection', true)
     })
+  }
+
+  /**
+   * @method setConnection
+   *
+   * @param {String} [name = null]
+   */
+  setConnection (name = null) {
+    this.connectionName = name
   }
 
   /**
@@ -64,7 +74,7 @@ class DatabaseManager {
    * @throws {missingDatabaseConnection} If connection is not defined in config file.
    */
   connection (name) {
-    name = name || this.Config.get('database.connection')
+    name = name || this.connectionName || this.Config.get('database.connection')
 
     /**
      * Return connection if part of connection pool already
